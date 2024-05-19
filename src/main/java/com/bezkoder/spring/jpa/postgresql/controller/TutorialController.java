@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -21,17 +20,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bezkoder.spring.jpa.postgresql.model.Tutorial;
 import com.bezkoder.spring.jpa.postgresql.repository.TutorialRepository;
 
-@CrossOrigin(origins = "http://localhost:8081")
+//@CrossOrigin(origins = "http://localhost:8081")
 @RestController
 @RequestMapping("/api")
 public class TutorialController {
 
-	//@Autowired
+	// @Autowired // no need, if we add @repository in TutorialRepository
 	private final TutorialRepository tutorialRepository;
 
-	
 	public TutorialController(TutorialRepository tutorialRepository) {
-		 
 		this.tutorialRepository = tutorialRepository;
 	}
 
@@ -92,6 +89,27 @@ public class TutorialController {
 		}
 	}
 
+	@PatchMapping("/tutorials/{id}")
+	public ResponseEntity<Tutorial> update1Tutorial(@PathVariable("id") long id, @RequestBody Tutorial tutorial) {
+		Optional<Tutorial> tutorialData = tutorialRepository.findById(id);
+
+		if (tutorialData.isPresent()) {
+			Tutorial _tutorial = tutorialData.get();
+			if (tutorial.getDescription() != null) {
+				_tutorial.setDescription(tutorial.getDescription());
+			}
+			if (tutorial.getTitle() != null) {
+				_tutorial.setTitle(tutorial.getTitle());
+			}
+
+			_tutorial.setPublished(tutorial.isPublished());
+
+			return new ResponseEntity<>(tutorialRepository.save(_tutorial), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+	}
+
 	@DeleteMapping("/tutorials/{id}")
 	public ResponseEntity<HttpStatus> deleteTutorial(@PathVariable("id") long id) {
 		try {
@@ -126,4 +144,5 @@ public class TutorialController {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+
 }
