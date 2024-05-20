@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bezkoder.spring.jpa.postgresql.NotExistException;
+import com.bezkoder.spring.jpa.postgresql.TutorialFileReader;
 import com.bezkoder.spring.jpa.postgresql.model.Tutorial;
 import com.bezkoder.spring.jpa.postgresql.repository.TutorialRepository;
 
@@ -55,14 +57,13 @@ public class TutorialController {
 
 		} catch (NotExistException e) {
 			System.out.println(e.getMessage());
-		 return new ResponseEntity<>(null, HttpStatus.NO_CONTENT );
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 
 		}
-	 return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-		 
+		return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 
 	}
 
@@ -86,6 +87,22 @@ public class TutorialController {
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}
+
+	@PostMapping("/initTutorials")
+ 	@ResponseStatus(HttpStatus.CREATED)
+	public String initTutorialData() {
+		// read json file and insert into the table
+
+		String jsonFilePath = "src/main/java/tutorials.json";
+		ArrayList<Tutorial> tutorials = TutorialFileReader.readTutorialFromJson(jsonFilePath);
+		 
+//		for (Tutorial tutorial : tutorials) {
+//			  tutorialRepository.save(new Tutorial(tutorial.getTitle(), tutorial.getDescription(), false));
+//		}
+		 tutorialRepository.saveAll(tutorials);
+		return  "Data initialized.";
+		
 	}
 
 	@PutMapping("/tutorials/{id}")
