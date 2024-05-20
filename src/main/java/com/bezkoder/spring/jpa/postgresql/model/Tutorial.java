@@ -1,7 +1,14 @@
 package com.bezkoder.spring.jpa.postgresql.model;
 
 // import javax.persistence.*; // for Spring Boot 2
-import jakarta.persistence.*; // for Spring Boot 3
+// for Spring Boot 3
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
 
 @Entity
 @Table(name = "tutorials")
@@ -10,7 +17,7 @@ public class Tutorial {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
-
+	@NotEmpty
 	@Column(name = "title")
 	private String title;
 

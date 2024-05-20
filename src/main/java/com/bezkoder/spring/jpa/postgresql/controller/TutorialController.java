@@ -17,8 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bezkoder.spring.jpa.postgresql.NotExistException;
 import com.bezkoder.spring.jpa.postgresql.model.Tutorial;
 import com.bezkoder.spring.jpa.postgresql.repository.TutorialRepository;
+
+import jakarta.validation.Valid;
 
 //@CrossOrigin(origins = "http://localhost:8081")
 @RestController
@@ -34,22 +37,33 @@ public class TutorialController {
 
 	@GetMapping("/tutorials")
 	public ResponseEntity<List<Tutorial>> getAllTutorials(@RequestParam(required = false) String title) {
+
 		try {
 			List<Tutorial> tutorials = new ArrayList<Tutorial>();
 
-			if (title == null)
+			if (title == null) {
 				tutorialRepository.findAll().forEach(tutorials::add);
-			else
+			} else {
 				tutorialRepository.findByTitleContaining(title).forEach(tutorials::add);
-
+			}
 			if (tutorials.isEmpty()) {
-				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+				// return new ResponseEntity<>(tutorials, HttpStatus.NO_CONTENT);
+				throw new NotExistException();
+			} else {
+				return new ResponseEntity<>(tutorials, HttpStatus.OK);
 			}
 
-			return new ResponseEntity<>(tutorials, HttpStatus.OK);
+		} catch (NotExistException e) {
+			System.out.println(e.getMessage());
+		 return new ResponseEntity<>(null, HttpStatus.NO_CONTENT );
+
 		} catch (Exception e) {
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+			System.out.println(e.getMessage());
+
 		}
+	 return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		 
+
 	}
 
 	@GetMapping("/tutorials/{id}")
@@ -64,7 +78,7 @@ public class TutorialController {
 	}
 
 	@PostMapping("/tutorials")
-	public ResponseEntity<Tutorial> createTutorial(@RequestBody Tutorial tutorial) {
+	public ResponseEntity<Tutorial> createTutorial(@Valid @RequestBody Tutorial tutorial) {
 		try {
 			Tutorial _tutorial = tutorialRepository
 					.save(new Tutorial(tutorial.getTitle(), tutorial.getDescription(), false));
