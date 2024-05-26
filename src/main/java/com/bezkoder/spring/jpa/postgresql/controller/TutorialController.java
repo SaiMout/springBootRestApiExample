@@ -90,19 +90,19 @@ public class TutorialController {
 	}
 
 	@PostMapping("/initTutorials")
- 	@ResponseStatus(HttpStatus.CREATED)
+	@ResponseStatus(HttpStatus.CREATED)
 	public String initTutorialData() {
 		// read json file and insert into the table
 
 		String jsonFilePath = "src/main/java/tutorials.json";
 		ArrayList<Tutorial> tutorials = TutorialFileReader.readTutorialFromJson(jsonFilePath);
-		 
+
 //		for (Tutorial tutorial : tutorials) {
 //			  tutorialRepository.save(new Tutorial(tutorial.getTitle(), tutorial.getDescription(), false));
 //		}
-		 tutorialRepository.saveAll(tutorials);
-		return  "Data initialized.";
-		
+		tutorialRepository.saveAll(tutorials);
+		return "Data initialized.";
+
 	}
 
 	@PutMapping("/tutorials/{id}")

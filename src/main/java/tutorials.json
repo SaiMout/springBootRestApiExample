@@ -1,0 +1,22 @@
+[
+    {
+        "title": "Java",
+        "description": "Book for Java learners"
+    },
+    {
+        "title": "Python",
+        "description": "Introduction to Python programming"
+    },
+    {
+        "title": "JavaScript",
+        "description": "Web development with JavaScript"
+    },
+    {
+        "title": "C++",
+        "description": "Advanced C++ programming techniques"
+    },
+    {
+        "title": "Data Science",
+        "description": "Exploring data science concepts"
+    }
+]

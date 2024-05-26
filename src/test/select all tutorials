@@ -1,0 +1,2 @@
+select * from tutorials;SELECT *
+  FROM "public"."tutorials"
